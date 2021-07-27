@@ -24,9 +24,18 @@ from dash_extensions import Download
 from dash_extensions.snippets import send_data_frame
 import pdb
 
+## variables
+
+
+
 
 ## APIS start
 sample_df = []
+vrp_options = [
+            {'label': 'Time Windows', 'value': 'tw'},
+            {'label': 'Capacitated', 'value': 'capacitated'},
+            {'label': 'Pickups and Deliveries', 'value': 'pickdel'}
+]
 
 def load_matrix(selected_matrix, delim='\t', pre_path='data/'):
     """Method to load a matrix of data as table.
@@ -121,13 +130,25 @@ app.layout = html.Div([
     ], className='row',
                 style= {'padding-left' : '50px'}), # closes the div for first line (matrix and year)
     html.Hr(),
-    html.Button('Καταχώρηση Παραμέτρων', id='submit-val', n_clicks=0, style=white_button_style),
+    html.Button('ΚΑΤΑΧΩΡΗΣΗ ΣΥΝΟΛΟΥ ΔΕΔΟΜΕΝΩΝ ΚΑΙ ΕΠΙΛΟΓΩΝ', id='submit-val', n_clicks=0, style=white_button_style),
     html.Hr(),
     # end of filters
     # table here
     html.Div(id='display_supermarkets_table',  className='tableDiv'),
     html.Hr(),
     # end of table
+    html.Div([
+        html.Label("ΕΠΙΛΟΓΗ ΠΑΡΑΜΕΤΡΩΝ VRP",
+                    style={'font-weight': 'bold',
+                            'fontSize' : '17px'}),
+        dcc.Checklist(
+            id='vrp-checklist',
+            options=vrp_options,
+            value=[]
+        ),
+    ]),
+    html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp-submit-val', n_clicks=0, style=white_button_style),
+    html.Hr(),
 ])
 
 
