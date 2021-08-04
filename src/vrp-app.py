@@ -22,11 +22,13 @@ import os
 cwd = os.getcwd()
 from dash_extensions import Download
 from dash_extensions.snippets import send_data_frame
+import flora
 import pdb
+import network_operations
 
 ## variables
 image = 'url("assets/Banner_Fleet.jpg")'
-
+selected_dff = []
 
 
 ## APIS start
@@ -73,9 +75,79 @@ def get_table_selections(selected_dataset, selected_names):
     return dff
 
 
-def call_vrp_parameters():
-    #TODO to be continued
-    pass
+def create_distance_matrix_from_selection(dff):
+    """Method to create a distance matrix (OD Matrix) from a given
+    selection of dataframe.
+
+    Args:
+        dff (dataframe): User selection of data (POIs)
+
+    Returns:
+        [list]: list of lists containing distances
+    """
+    distance_matrix = []
+    return distance_matrix
+
+
+def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[],
+                        time_windows=[], depot_capacity=0, vehicle_load_time=0,
+                        vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
+    """Method to initialize and create the appropriate dataset for the VRP to run.
+
+    Args:
+        num_vehicles ([type]): [description]
+        depot (int, optional): [description]. Defaults to 0.
+        demands (list, optional): [description]. Defaults to [].
+        vehicle_capacities (list, optional): [description]. Defaults to [].
+        time_windows (list, optional): [description]. Defaults to [].
+        depot_capacity (int, optional): [description]. Defaults to 0.
+        vehicle_load_time (int, optional): [description]. Defaults to 0.
+        vehicle_unload_time (int, optional): [description]. Defaults to 0.
+    """
+    # prepare data in order to be run by google or vrp.
+    selected_dff.to_csv(dff_selection_path, sep='\t')
+    od_dist = network_operations.compute_distance_matrix(dff_selection_path)[0]
+    # check the parameters and run the corresponding VRP problem respectively.
+    # check the number of vehicles. if it is empty then no VRP can be run.
+    pdb.set_trace()
+    if not num_vehicles:
+        print("number of vehicles is 0. Cannot run the program.")
+    if demands and time_windows:
+        # call combo vrp!
+        #TODO combo_vrp(num_vehicles, depot, demands, vehicle_capacities, time_windows)
+        pass
+    if demands:
+        # call vrp capacitated
+        #TODO capacitated_vrp(num_vehicles, demands, vehicle_capacities)
+        pass
+    if time_windows:
+        # call vrp time windows
+        #TODO tw_vrp(num_vehicles, time_windows)
+        pass
+    if vehicle_load_time:
+        # call vrp extra params
+        # TODO vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
+        pass
+    google_basic_vrp(od_dist, num_vehicles)
+    pdb.set_trace()
+
+
+def google_basic_vrp(od_dist, num_vehicles):
+    """Method to prepare google vrp with just basic params.
+
+    Args:
+        od_dist (list): list of lists representing od matrix
+        num_vehicles (int): number of vehicles
+
+    Returns:
+        [type]: [description]
+    """
+    data = {}
+    data['distance_matrix'] = od_dist
+    data['num_vehicles'] = num_vehicles
+    data['depot'] = 0
+    import google_vrps.google_vrp as gvrp
+    gvrp.google_vrp(data)
 
 ## APIS end
 
@@ -241,6 +313,7 @@ app.layout = html.Div([
                     }
                 ),
                 html.Div(id='depot_capacity_output', style={'margin-top': 2}),
+                html.Hr(),
                 #vehicle load time
                 html.Label("ΧΡΟΝΟΣ ΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
                 dcc.Slider(id='vehicle_load_time',
@@ -276,7 +349,8 @@ app.layout = html.Div([
                 'background-size':'cover',
                 'background-position':'right'}),
     # button here
-    html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp-submit-val', n_clicks=0, style=white_button_style),
+    html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp_submit_val', n_clicks=0, style=white_button_style),
+    html.Div(id='container-button-basic', style={'margin-top': 20}),
     html.Hr(),
 ])
 
@@ -318,6 +392,9 @@ def set_products_options(selected_matrix, selected_country):
 def set_display_table(n_clicks, selected_dataset, selected_names):
     # todo code here
     dff = get_table_selections(selected_dataset, selected_names)
+    # assign dff selection to selected dff for further operations.
+    global selected_dff
+    selected_dff = dff.copy()
     return html.Div([
         dash_table.DataTable(
             id='main-table',
@@ -398,6 +475,17 @@ def display_value(value):
               Input('vehicle_unload_time', 'value'))
 def display_value(value):
     return 'Χρόνος εκφόρτωσης: {} λεπτά'.format(value)
+
+
+@app.callback(
+    Output('container-button-basic', 'children'),
+    [Input('vrp_submit_val', 'n_clicks')],
+    [State('num_vehicles', 'value'),
+     State('demand', 'value'),
+     State('capacity', 'value'),
+     State('tw_range_slider', 'value')])
+def update_output(click_value, num_vehicles, demand, capacity, tw_range):
+    call_vrp_parameters(num_vehicles, depot=0)
 
 ### end of VRP parameters feedback output
 
