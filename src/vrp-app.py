@@ -122,8 +122,7 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
         pass
     if time_windows:
         # call vrp time windows
-        #TODO tw_vrp(num_vehicles, time_windows)
-        pass
+        google_time_windows_vrp(od_dist, num_vehicles, time_windows)
     if vehicle_load_time:
         # call vrp extra params
         # TODO vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
@@ -164,6 +163,21 @@ def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
     gcvrp.capacitated_vrp(data)
 
 
+def google_time_windows_vrp(od_dist, num_vehicles, time_windows):
+    # create data model for time windows
+    data = {}
+    data['time_matrix'] = od_dist
+    data['num_vehicles'] = num_vehicles
+    data['depot'] = 0
+    data['time_windows'] = _generate_time_windows(od_dist, time_windows)
+    # run time windows vrp
+    import google_vrps.google_twvrp as gtwvrp
+    gtwvrp.time_windows_vrp(data)
+
+## APIS end
+
+####  help functions in APIs  ####
+
 def _generate_pois_demands(od_dist, demands, randomness=0):
     if not randomness:
         demands_list = [demands for demand in range(len(od_dist))]
@@ -182,7 +196,23 @@ def _generate_vehicle_capacities(od_dist, num_vehicles, demands, vehicle_capacit
         capacities = [vehicle_capacities for cap in range(num_vehicles)]
         return capacities
 
-## APIS end
+
+def _generate_time_windows(od_dist, time_windows):
+    """method to generate time windows for google vrp.
+
+    Args:
+        od_dist (list): list of lists representing od matrix.
+        time_windows (list): list containing two numbers of time window [min, max]
+
+    Returns:
+        [list]: time windows for data
+    """
+    tw = tuple(time_windows)
+    time_matrix = [tw for elem in range(len(od_dist))]
+    return time_matrix
+
+#### end of help functions in APIs  ####
+
 
 white_button_style = {'background-color': 'white',
                       'color': 'black',
@@ -518,7 +548,7 @@ def display_value(value):
      State('capacity', 'value'),
      State('tw_range_slider', 'value')])
 def update_output(click_value, num_vehicles, demand, capacity, tw_range):
-    call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity)
+    call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity, time_windows=tw_range)
 
 ### end of VRP parameters feedback output
 
