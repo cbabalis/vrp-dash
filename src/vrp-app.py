@@ -118,7 +118,7 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
         pass
     if demands:
         # call vrp capacitated
-        #TODO capacitated_vrp(num_vehicles, demands, vehicle_capacities)
+        google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities)
         pass
     if time_windows:
         # call vrp time windows
@@ -148,6 +148,39 @@ def google_basic_vrp(od_dist, num_vehicles):
     data['depot'] = 0
     import google_vrps.google_vrp as gvrp
     gvrp.google_vrp(data)
+
+
+def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
+    data = {}
+    data['distance_matrix'] = od_dist
+    data['num_vehicles'] = num_vehicles
+    data['depot'] = 0
+    # generate demands of points of interest
+    data['demands'] = _generate_pois_demands(od_dist, demands)
+    # generate capacity of vehicles
+    data['vehicle_capacities'] = _generate_vehicle_capacities(od_dist, num_vehicles, demands, vehicle_capacities)
+    # run capacitated vrp
+    import google_vrps.google_cvrp as gcvrp
+    gcvrp.capacitated_vrp(data)
+
+
+def _generate_pois_demands(od_dist, demands, randomness=0):
+    if not randomness:
+        demands_list = [demands for demand in range(len(od_dist))]
+        return demands_list
+    else:
+        #TODO randomness should be implemented
+        print("no randomness has been implemented!")
+        demands_list = [demands for demand in range(len(od_dist))]
+        return demands_list
+
+
+def _generate_vehicle_capacities(od_dist, num_vehicles, demands, vehicle_capacities, randomness=0):
+    # TODO no implementation of randomness yet
+    assert vehicle_capacities * num_vehicles > len(od_dist) * demands, "not enough capacity"
+    if not randomness:
+        capacities = [vehicle_capacities for cap in range(num_vehicles)]
+        return capacities
 
 ## APIS end
 
@@ -485,7 +518,7 @@ def display_value(value):
      State('capacity', 'value'),
      State('tw_range_slider', 'value')])
 def update_output(click_value, num_vehicles, demand, capacity, tw_range):
-    call_vrp_parameters(num_vehicles, depot=0)
+    call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity)
 
 ### end of VRP parameters feedback output
 
