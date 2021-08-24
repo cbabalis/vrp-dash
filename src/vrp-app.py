@@ -25,6 +25,7 @@ from dash_extensions.snippets import send_data_frame
 import flora
 import pdb
 import network_operations
+import vrp_plots
 
 ## variables
 image = 'url("assets/Banner_Fleet.jpg")'
@@ -109,6 +110,9 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
     od_dist = network_operations.compute_distance_matrix(dff_selection_path)[0]
     # check the parameters and run the corresponding VRP problem respectively.
     # check the number of vehicles. if it is empty then no VRP can be run.
+    solution = google_basic_vrp(od_dist, num_vehicles)
+    # assign node ids to "real" network nodes in a special struct.
+    lon_lat_struct_of_POIs = vrp_plots.convert_node_ids_to_nodes(selected_dff, solution)
     pdb.set_trace()
     if not num_vehicles:
         print("number of vehicles is 0. Cannot run the program.")
@@ -139,14 +143,15 @@ def google_basic_vrp(od_dist, num_vehicles):
         num_vehicles (int): number of vehicles
 
     Returns:
-        [type]: [description]
+        [dict]: dictionary of vehicle id with nodes to visit
     """
     data = {}
     data['distance_matrix'] = od_dist
     data['num_vehicles'] = num_vehicles
     data['depot'] = 0
     import google_vrps.google_vrp as gvrp
-    gvrp.google_vrp(data)
+    solution = gvrp.google_vrp(data)
+    return solution
 
 
 def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
@@ -415,6 +420,9 @@ app.layout = html.Div([
     html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp_submit_val', n_clicks=0, style=white_button_style),
     html.Div(id='container-button-basic', style={'margin-top': 20}),
     html.Hr(),
+    html.Div(children=[
+        dcc.Graph(id='map-fig'),
+    ], style = {'display': 'inline-block', 'height': '178%', 'width': '95%'}),
 ])
 
 
@@ -551,6 +559,16 @@ def update_output(click_value, num_vehicles, demand, capacity, tw_range):
     call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity, time_windows=tw_range)
 
 ### end of VRP parameters feedback output
+
+@app.callback(
+    Output('map-fig', 'figure'),
+    [Input('submit-map', 'n_clicks')],
+    [State('countries-radio', 'value'),
+    State('cities-radio', 'value'),
+    ])
+def print_vrp_to_map():
+    """TODO: params and code here
+    """
 
 
 
