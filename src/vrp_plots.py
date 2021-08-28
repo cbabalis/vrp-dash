@@ -22,6 +22,8 @@ import folium
 import polyline
 
 
+css_cols = ['aliceblue','antiquewhite','aqua','aquamarine','azure','beige','bisque','black','blanchedalmond','blue','blueviolet','brown','burlywood','cadetblue','chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson','cyan','darkblue','darkcyan','darkgoldenrod','darkgray','darkgrey','darkgreen','darkkhaki','darkmagenta','darkolivegreen','darkorange','darkorchid','darkred','darksalmon','darkseagreen','darkslateblue','darkslategray','darkslategrey','darkturquoise','darkviolet','deeppink','deepskyblue','dimgray','dimgrey','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','grey','green','greenyellow','honeydew','hotpink','indianred','indigo','ivory','khaki','lavender','lavenderblush','lawngreen','lemonchiffon','lightblue','lightcoral','lightcyan','lightgoldenrodyellow','lightgray','lightgrey','lightgreen','lightpink','lightsalmon','lightseagreen','lightskyblue','lightslategray','lightslategrey','lightsteelblue','lightyellow','lime','limegreen','linen','magenta','maroon','mediumaquamarine','mediumblue','mediumorchid','mediumpurple','mediumseagreen','mediumslateblue','mediumspringgreen','mediumturquoise','mediumvioletred','midnightblue','mintcream','mistyrose','moccasin','navajowhite','navy','oldlace','olive','olivedrab','orange','orangered','orchid','palegoldenrod','palegreen','paleturquoise','palevioletred','papayawhip','peachpuff','peru','pink','plum','powderblue','purple','red','rosybrown','royalblue','rebeccapurple','saddlebrown','salmon','sandybrown','seagreen','seashell','sienna','silver','skyblue','slateblue','slategray','slategrey','snow','springgreen','steelblue','tan','teal','thistle','tomato','turquoise','violet','wheat','white','whitesmoke','yellow','yellowgreen']
+
 def convert_node_ids_to_nodes(df, veh_id_dict):
     """ Method to convert a dictionary of <vehicle:[list_of_node_ids]>
     to <vehicle:[list of nodes]>
@@ -61,18 +63,19 @@ def plot_vehicles_with_routes(veh_node_dict):
     graph_filepath = '/home/blaxeep/workspace/osm_project/results/greece-athens.graphml'
     graph = net_ops.load_graph_from_disk(graph_filepath)
     # initialize color of each line.
-    colorscales = px.colors.named_colorscales()
+    colorscales = css_cols
+    # initialize figure
+    fig = go.Figure()
     for vehicle in veh_node_dict:
         # get color for the current vehicle
         col = colorscales.pop()
-        # initialize figure
-        fig = go.Figure()
-        if not fig:
-            lon = veh_node_dict[0][0]['longitude']
-            lat = veh_node_dict[0][0]['latitude']
-            fig = _initialize_figure(lon, lat, col)
+        # if not fig:
+        #     lon = veh_node_dict[0][0]['longitude']
+        #     lat = veh_node_dict[0][0]['latitude']
+        #    fig = _initialize_figure(lon, lat, col)
         # create paths for each vehicle and add them to the figure
-        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, col=colorscales.pop())
+        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, col=col)
+        pdb.set_trace()
     # return the final figure
     return fig
 
@@ -105,9 +108,8 @@ def paint_vehicle_route(fig, nodes_list, graph, col):
         set_geometry_between_two_points(origin_node, dest_node, lat_lines_list, lon_lines_list)
         # collect all points by latitude and longitude respectively
         set_coords_of_two_points(origin_node, dest_node, lat_nodes_list, lon_nodes_list)
-        # paint all collected points with the given color to the graph
-    fig = paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, col)
-    fig.show()
+    # paint all collected points with the given color to the graph
+    paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, col)
 
 
 def set_geometry_between_two_points(origin_node, dest_node, lat_list, lon_list):
@@ -141,7 +143,7 @@ def paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lo
             lon = lon_lines_list,
             lat = lat_lines_list,
             marker = {'size': 10},
-            line = dict(width = 4.5, color = 'blue')))
+            line = dict(width = 4.5, color = col)))
         # adding source marker
         fig.add_trace(go.Scattermapbox(
             name = "Source",
@@ -161,7 +163,6 @@ def paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lo
                             'center': {'lat': lat_center, 
                             'lon': long_center},
                             'zoom': 13})
-        return fig
 
 
 def _get_osrm_point_coords(lon_lat_dict):
@@ -173,7 +174,8 @@ test_data = {0: [{'longitude': 23.762025412372104, 'latitude': 37.88796469993920
 
 
 def main():
-    plot_vehicles_with_routes(test_data)
+    fig = plot_vehicles_with_routes(test_data)
+    fig.show()
 
 
 if __name__ == '__main__':
