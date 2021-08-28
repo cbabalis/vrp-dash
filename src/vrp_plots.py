@@ -22,7 +22,7 @@ import folium
 import polyline
 
 
-css_cols = ['aliceblue','antiquewhite','aqua','aquamarine','azure','beige','bisque','black','blanchedalmond','blue','blueviolet','brown','burlywood','cadetblue','chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson','cyan','darkblue','darkcyan','darkgoldenrod','darkgray','darkgrey','darkgreen','darkkhaki','darkmagenta','darkolivegreen','darkorange','darkorchid','darkred','darksalmon','darkseagreen','darkslateblue','darkslategray','darkslategrey','darkturquoise','darkviolet','deeppink','deepskyblue','dimgray','dimgrey','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','grey','green','greenyellow','honeydew','hotpink','indianred','indigo','ivory','khaki','lavender','lavenderblush','lawngreen','lemonchiffon','lightblue','lightcoral','lightcyan','lightgoldenrodyellow','lightgray','lightgrey','lightgreen','lightpink','lightsalmon','lightseagreen','lightskyblue','lightslategray','lightslategrey','lightsteelblue','lightyellow','lime','limegreen','linen','magenta','maroon','mediumaquamarine','mediumblue','mediumorchid','mediumpurple','mediumseagreen','mediumslateblue','mediumspringgreen','mediumturquoise','mediumvioletred','midnightblue','mintcream','mistyrose','moccasin','navajowhite','navy','oldlace','olive','olivedrab','orange','orangered','orchid','palegoldenrod','palegreen','paleturquoise','palevioletred','papayawhip','peachpuff','peru','pink','plum','powderblue','purple','red','rosybrown','royalblue','rebeccapurple','saddlebrown','salmon','sandybrown','seagreen','seashell','sienna','silver','skyblue','slateblue','slategray','slategrey','snow','springgreen','steelblue','tan','teal','thistle','tomato','turquoise','violet','wheat','white','whitesmoke','yellow','yellowgreen']
+css_cols = ['aliceblue','aqua','aquamarine','azure','beige','bisque','black','blanchedalmond','blue','blueviolet','brown','burlywood','cadetblue','chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson','cyan','darkblue','darkcyan','darkgoldenrod','darkgray','darkgrey','darkgreen','darkkhaki','darkmagenta','darkolivegreen','darkorange','darkorchid','darkred','darksalmon','darkseagreen','darkslateblue','darkslategray','darkslategrey','darkturquoise','darkviolet','deeppink','deepskyblue','dimgray','dimgrey','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','grey','green','greenyellow','honeydew','hotpink','indianred','indigo','ivory','khaki','lavender','lavenderblush','lawngreen','lemonchiffon','lightblue','lightcoral','lightcyan','lightgoldenrodyellow','lightgray','lightgrey','lightgreen','lightpink','lightsalmon','lightseagreen','lightskyblue','lightslategray','lightslategrey','lightsteelblue','lightyellow','lime','limegreen','linen','magenta','maroon','mediumaquamarine','mediumblue','mediumorchid','mediumpurple','mediumseagreen','mediumslateblue','mediumspringgreen','mediumturquoise','mediumvioletred','midnightblue','mintcream','mistyrose','moccasin','navajowhite','navy','oldlace','olive','olivedrab','orange','orangered','orchid','palegoldenrod','palegreen','paleturquoise','palevioletred','papayawhip','peachpuff','peru','pink','plum','powderblue','purple','red','rosybrown','royalblue','rebeccapurple','saddlebrown','salmon','sandybrown','seagreen','seashell','sienna','silver','skyblue','slateblue','slategray','slategrey','snow','springgreen','steelblue','tan','teal','thistle','tomato','turquoise','violet','wheat','yellow','yellowgreen']
 
 def convert_node_ids_to_nodes(df, veh_id_dict):
     """ Method to convert a dictionary of <vehicle:[list_of_node_ids]>
@@ -74,8 +74,7 @@ def plot_vehicles_with_routes(veh_node_dict):
         #     lat = veh_node_dict[0][0]['latitude']
         #    fig = _initialize_figure(lon, lat, col)
         # create paths for each vehicle and add them to the figure
-        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, col=col)
-        pdb.set_trace()
+        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, colorlist=css_cols)
     # return the final figure
     return fig
 
@@ -91,7 +90,7 @@ def _initialize_figure(lon, lat, col):
     return fig
 
 
-def paint_vehicle_route(fig, nodes_list, graph, col):
+def paint_vehicle_route(fig, nodes_list, graph, colorlist):
     # create empty lists of lines and lat, lon of nodes
     lat_lines_list = []
     lon_lines_list = []
@@ -109,7 +108,7 @@ def paint_vehicle_route(fig, nodes_list, graph, col):
         # collect all points by latitude and longitude respectively
         set_coords_of_two_points(origin_node, dest_node, lat_nodes_list, lon_nodes_list)
     # paint all collected points with the given color to the graph
-    paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, col)
+    paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, colorlist)
 
 
 def set_geometry_between_two_points(origin_node, dest_node, lat_list, lon_list):
@@ -136,27 +135,29 @@ def set_coords_of_two_points(origin_node, dest_node, lat_list, lon_list):
     lon_list.append(dest_node.longitude)
 
 
-def paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, col):
+def paint_data_to_figure(fig, lat_nodes_list, lon_nodes_list, lat_lines_list, lon_lines_list, colorlist):
         fig.add_trace(go.Scattermapbox(
             name = "Path",
             mode = "lines",
             lon = lon_lines_list,
             lat = lat_lines_list,
             marker = {'size': 10},
-            line = dict(width = 4.5, color = col)))
+            line = dict(width = 4.5, color = colorlist.pop())))
         # adding source marker
         fig.add_trace(go.Scattermapbox(
             name = "Source",
             mode = "markers",
             lon = lon_nodes_list,
             lat = lat_nodes_list,
-            marker = {'size': 12, 'color':"red"}))
+            marker = {'size': 15, 'color':colorlist.pop(), 'opacity':0.8},
+            ))
+        
         
         # getting center for plots:
         lat_center = np.mean(lat_lines_list)
         long_center = np.mean(lon_lines_list)
         # defining the layout using mapbox_style
-        fig.update_layout(mapbox_style="stamen-terrain",
+        fig.update_layout(mapbox_style="open-street-map", #"stamen-terrain",
             mapbox_center_lat = 30, mapbox_center_lon=-80)
         fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
                         mapbox = {
