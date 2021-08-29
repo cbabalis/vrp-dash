@@ -30,6 +30,7 @@ import vrp_plots
 ## variables
 image = 'url("assets/Banner_Fleet.jpg")'
 selected_dff = []
+lon_lat_struct_of_POIs = ''
 
 
 ## APIS start
@@ -111,9 +112,11 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
     # check the parameters and run the corresponding VRP problem respectively.
     # check the number of vehicles. if it is empty then no VRP can be run.
     solution = google_basic_vrp(od_dist, num_vehicles)
+    print("solution has been found!")
     # assign node ids to "real" network nodes in a special struct.
+    global lon_lat_struct_of_POIs
     lon_lat_struct_of_POIs = vrp_plots.convert_node_ids_to_nodes(selected_dff, solution)
-    pdb.set_trace()
+    pass
     if not num_vehicles:
         print("number of vehicles is 0. Cannot run the program.")
     if demands and time_windows:
@@ -418,6 +421,7 @@ app.layout = html.Div([
                 'background-position':'right'}),
     # button here
     html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp_submit_val', n_clicks=0, style=white_button_style),
+    html.Button('ΑΠΕΙΚΟΝΙΣΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ ΣΕ ΧΑΡΤΗ', id='submit-map', n_clicks=0, style=white_button_style),
     html.Div(id='container-button-basic', style={'margin-top': 20}),
     html.Hr(),
     html.Div(children=[
@@ -562,13 +566,12 @@ def update_output(click_value, num_vehicles, demand, capacity, tw_range):
 
 @app.callback(
     Output('map-fig', 'figure'),
-    [Input('submit-map', 'n_clicks')],
-    [State('countries-radio', 'value'),
-    State('cities-radio', 'value'),
-    ])
-def print_vrp_to_map():
+    [Input('submit-map', 'n_clicks')])
+def print_vrp_to_map(click_value):
     """TODO: params and code here
     """
+    fig = vrp_plots.plot_vehicles_with_routes(lon_lat_struct_of_POIs)
+    return fig
 
 
 

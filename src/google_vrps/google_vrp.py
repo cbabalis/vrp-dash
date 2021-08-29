@@ -11,6 +11,7 @@
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import flora
+import pdb
 
 
 def print_solution(data, manager, routing, solution):
@@ -33,6 +34,41 @@ def print_solution(data, manager, routing, solution):
         max_route_distance = max(route_distance, max_route_distance)
     print('Maximum of the route distances: {}m'.format(max_route_distance))
 
+
+def get_solution(data, manager, routing, solution):
+    """Method that modified the print_solution and returns
+    a dictionary of <veh_id:[nodes list]> pairs and <dist_id:distance>
+    pairs.
+
+    Args:
+        data ([type]): [description]
+        manager ([type]): [description]
+        routing ([type]): [description]
+        solution ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    route_list = {}
+    max_route_distance = 0
+    for vehicle_id in range(data['num_vehicles']):
+        index = routing.Start(vehicle_id)
+        route_list[vehicle_id] = []
+        route_distance = 0
+        while not routing.IsEnd(index):
+            route_list[vehicle_id].append(manager.IndexToNode(index))
+            previous_index = index
+            index = solution.Value(routing.NextVar(index))
+            route_distance += routing.GetArcCostForVehicle(
+                previous_index, index, vehicle_id)
+        route_list[vehicle_id].append(manager.IndexToNode(index))
+        #_set_route_distance(vehicle_id, route_distance, route_list)
+    return route_list
+
+
+def _set_route_distance(vehicle_id, route_distance, route_list):
+    route_id = str(vehicle_id) + '_route_distance'
+    route_list[route_id] = route_distance
 
 
 def google_vrp(data):
@@ -82,7 +118,10 @@ def google_vrp(data):
 
     # Print solution on console.
     if solution:
-        print_solution(data, manager, routing, solution)
+        #print_solution(data, manager, routing, solution)
+        # get solution and return it
+        sol = get_solution(data, manager, routing, solution)
+        return sol
     else:
         print('No solution found !')
 
