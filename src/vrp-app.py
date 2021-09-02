@@ -26,11 +26,13 @@ import flora
 import pdb
 import network_operations
 import vrp_plots
+import time
 
 ## variables
 image = 'url("assets/Banner_Fleet.jpg")'
 selected_dff = []
 lon_lat_struct_of_POIs = ''
+solution_found = False
 
 
 ## APIS start
@@ -68,7 +70,8 @@ def get_table_selections(selected_dataset, selected_names):
     Returns:
         [type]: [description]
     """
-    print("type of selected_names is ", type(selected_names))
+    if selected_names:
+        print("type of selected_names is ", type(selected_names))
     dff = load_matrix(selected_dataset)
     filter_col = 'brand:en'
     dff = dff[dff[filter_col].isin(selected_names)]
@@ -111,8 +114,12 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
     od_dist = network_operations.compute_distance_matrix(dff_selection_path)[0]
     # check the parameters and run the corresponding VRP problem respectively.
     # check the number of vehicles. if it is empty then no VRP can be run.
+    global solution_found
+    solution_found = False
     solution = google_basic_vrp(od_dist, num_vehicles)
-    print("solution has been found!")
+    if solution:
+        print("solution has been found!")
+        solution_found = True
     # assign node ids to "real" network nodes in a special struct.
     global lon_lat_struct_of_POIs
     lon_lat_struct_of_POIs = vrp_plots.convert_node_ids_to_nodes(selected_dff, solution)
@@ -218,6 +225,7 @@ def _generate_time_windows(od_dist, time_windows):
     tw = tuple(time_windows)
     time_matrix = [tw for elem in range(len(od_dist))]
     return time_matrix
+
 
 #### end of help functions in APIs  ####
 
@@ -423,6 +431,7 @@ app.layout = html.Div([
     html.Button('ΚΑΤΑΧΩΡΗΣΗ ΠΑΡΑΜΕΤΡΩΝ ΔΡΟΜΟΛΟΓΗΣΗΣ ΟΧΗΜΑΤΩΝ', id='vrp_submit_val', n_clicks=0, style=white_button_style),
     html.Button('ΑΠΕΙΚΟΝΙΣΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ ΣΕ ΧΑΡΤΗ', id='submit-map', n_clicks=0, style=white_button_style),
     html.Div(id='container-button-basic', style={'margin-top': 20}),
+    html.Div(id='vrp-solution-state'),
     html.Hr(),
     html.Div(children=[
         dcc.Graph(id='map-fig'),
@@ -562,7 +571,30 @@ def display_value(value):
 def update_output(click_value, num_vehicles, demand, capacity, tw_range):
     call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity, time_windows=tw_range)
 
+
+@app.callback(Output('vrp-solution-state', 'children'),
+              Input('vrp_submit_val', 'n_clicks'),)
+def update_solution_msg(btn_click):
+    # compute timestamp and name the filename.
+    msg = 'Αναζήτηση Λύσης.'
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if ('vrp_submit_val' in changed_id):
+        msg = _has_solution_found()
+    return html.Div(msg)
+
+
+def _has_solution_found(timer=60):
+    global solution_found
+    current_timer = 0
+    while not solution_found:
+        time.sleep(1)
+        current_timer += 1
+        if current_timer > timer:
+            return "Δεν βρέθηκε λύση."
+    return "Βρέθηκε λύση με τις δοθείσες παραμέτρους"
+
 ### end of VRP parameters feedback output
+
 
 @app.callback(
     Output('map-fig', 'figure'),
