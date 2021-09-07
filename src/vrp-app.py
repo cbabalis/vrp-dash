@@ -316,12 +316,12 @@ app.layout = html.Div([
                                     'fontSize' : '17px'}),
                 html.Label("ΑΡΙΘΜΟΣ ΟΧΗΜΑΤΩΝ"),
                 dcc.Slider(id='num_vehicles',
-                min=5,
+                min=1,
                 max=75,
-                value=10,
+                value=1,
                 step=1,
                 marks={
-                    5: {'label': '5', 'style': {'color': '#77b0b1'}},
+                    1: {'label': '1', 'style': {'color': '#77b0b1'}},
                     75: {'label': '75', 'style': {'color': '#f50'}}
                     }
                 ),
@@ -337,12 +337,12 @@ app.layout = html.Div([
                                     'fontSize' : '17px'}),
                 html.Label("ΖΗΤΗΣΗ ΑΝΑ ΚΑΤΑΣΤΗΜΑ"),
                 dcc.Slider(id='demand',
-                min=1,
+                min=0,
                 max=100,
-                value=20,
+                value=0,
                 step=1,
                 marks={
-                    1: {'label': '1', 'style': {'color': '#77b0b1'}},
+                    0: {'label': '0', 'style': {'color': '#77b0b1'}},
                     100: {'label': '100', 'style': {'color': '#f50'}}
                     }
                 ),
@@ -367,7 +367,7 @@ app.layout = html.Div([
                     min=8,
                     max=20,
                     step=1,
-                    value=[8,10]
+                    value=[0,0]
                 ),
                 html.Div(id='tw_range_slider_output', style={'margin-top': 2}),
             ]),
@@ -396,12 +396,12 @@ app.layout = html.Div([
                 #vehicle load time
                 html.Label("ΧΡΟΝΟΣ ΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
                 dcc.Slider(id='vehicle_load_time',
-                min=10,
+                min=0,
                 max=60,
-                value=15,
+                value=0,
                 step=1,
                 marks={
-                    15: {'label': '15', 'style': {'color': '#77b0b1'}},
+                    0: {'label': '0', 'style': {'color': '#77b0b1'}},
                     60: {'label': '60', 'style': {'color': '#f50'}}
                     }
                 ),
@@ -409,12 +409,12 @@ app.layout = html.Div([
                 # vehicle unload time
                 html.Label("ΧΡΟΝΟΣ ΕΚΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
                 dcc.Slider(id='vehicle_unload_time',
-                min=10,
+                min=0,
                 max=60,
-                value=15,
+                value=0,
                 step=1,
                 marks={
-                    15: {'label': '15', 'style': {'color': '#77b0b1'}},
+                    0: {'label': '0', 'style': {'color': '#77b0b1'}},
                     60: {'label': '60', 'style': {'color': '#f50'}}
                     }
                 ),
