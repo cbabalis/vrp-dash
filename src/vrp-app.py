@@ -116,33 +116,43 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
     # check the number of vehicles. if it is empty then no VRP can be run.
     global solution_found
     solution_found = False
-    solution = google_basic_vrp(od_dist, num_vehicles)
+    solution = _select_vrp_params(od_dist, num_vehicles, depot, demands,
+                                  vehicle_capacities, time_windows, depot_capacity,
+                                  vehicle_load_time,vehicle_unload_time, dff_selection_path)#google_basic_vrp(od_dist, num_vehicles)
     if solution:
         print("solution has been found!")
         solution_found = True
     # assign node ids to "real" network nodes in a special struct.
     global lon_lat_struct_of_POIs
     lon_lat_struct_of_POIs = vrp_plots.convert_node_ids_to_nodes(selected_dff, solution)
-    pass
-    if not num_vehicles:
-        print("number of vehicles is 0. Cannot run the program.")
-    if demands and time_windows:
-        # call combo vrp!
-        #TODO combo_vrp(num_vehicles, depot, demands, vehicle_capacities, time_windows)
+
+
+def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capacities=[],
+                        time_windows=[], depot_capacity=0, vehicle_load_time=0,
+                        vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
+    solution = ''
+    if demands and _are_there_time_windows(time_windows):
+        #solution = combo_vrp(od_dist, num_vehicles, depot, demands, vehicle_capacities, time_windows)
         pass
-    if demands:
-        # call vrp capacitated
-        google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities)
+    elif demands:
+        solution = google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities)
+    elif _are_there_time_windows(time_windows):
+        solution = google_time_windows_vrp(od_dist, num_vehicles, time_windows)
+    elif vehicle_load_time:
+        #solution = vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
         pass
-    if time_windows:
-        # call vrp time windows
-        google_time_windows_vrp(od_dist, num_vehicles, time_windows)
-    if vehicle_load_time:
-        # call vrp extra params
-        # TODO vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
-        pass
-    google_basic_vrp(od_dist, num_vehicles)
-    pdb.set_trace()
+    else:
+        pdb.set_trace()
+        solution = google_basic_vrp(od_dist, num_vehicles)
+    return solution
+
+
+def _are_there_time_windows(time_windows):
+    assert len(time_windows) == 2, "time windows list is empty!"
+    start_time, end_time = time_windows
+    if (start_time == end_time) or (len(time_windows) != 2):
+        return False
+    return True
 
 
 def google_basic_vrp(od_dist, num_vehicles):
