@@ -142,7 +142,6 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
         #solution = vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
         pass
     else:
-        pdb.set_trace()
         solution = google_basic_vrp(od_dist, num_vehicles)
     return solution
 

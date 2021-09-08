@@ -2,6 +2,7 @@
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import pdb
 
 
 def print_solution(data, manager, routing, solution):
@@ -31,6 +32,44 @@ def print_solution(data, manager, routing, solution):
         total_load += route_load
     print('Total distance of all routes: {}m'.format(total_distance))
     print('Total load of all routes: {}'.format(total_load))
+
+
+def get_solution(data, manager, routing, solution):
+    """Method to modify the print_solution and to return a tuple
+    of <veh_id:[nodes list]> pairs, <veh_id:demand> pairs and
+    <veh_id:distance> pairs respectively.
+
+    Args:
+        data ([type]): [description]
+        manager ([type]): [description]
+        routing ([type]): [description]
+        solution ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    route_list = get_route_list(data, manager, routing, solution)
+    route_load = {}
+    return route_list
+    #return (route_list, route_demand, route_dist)
+
+
+def get_route_list(data, manager, routing, solution):
+    route_list = {}
+    max_route_distance = 0
+    for vehicle_id in range(data['num_vehicles']):
+        index = routing.Start(vehicle_id)
+        route_list[vehicle_id] = []
+        route_distance = 0
+        while not routing.IsEnd(index):
+            route_list[vehicle_id].append(manager.IndexToNode(index))
+            previous_index = index
+            index = solution.Value(routing.NextVar(index))
+            route_distance += routing.GetArcCostForVehicle(
+                previous_index, index, vehicle_id)
+        route_list[vehicle_id].append(manager.IndexToNode(index))
+        #_set_route_distance(vehicle_id, route_distance, route_list)
+    return route_list
 
 
 def capacitated_vrp(cvrp_data):
@@ -89,7 +128,11 @@ def capacitated_vrp(cvrp_data):
 
     # Print solution on console.
     if solution:
-        print_solution(data, manager, routing, solution)
+        #print_solution(data, manager, routing, solution)
+        sol = get_solution(data, manager, routing, solution)
+        return sol
+    else:
+        print("No solution found!")
 
 
 if __name__ == '__main__':
