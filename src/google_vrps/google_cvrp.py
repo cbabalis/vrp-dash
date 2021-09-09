@@ -132,7 +132,7 @@ def capacitated_vrp(cvrp_data):
         sol = get_solution(data, manager, routing, solution)
         return sol
     else:
-        print("No solution found!")
+        print("No solution for cvrp found!")
 
 
 if __name__ == '__main__':

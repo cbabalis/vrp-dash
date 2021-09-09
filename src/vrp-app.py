@@ -94,7 +94,7 @@ def create_distance_matrix_from_selection(dff):
     return distance_matrix
 
 
-def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[],
+def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=0,
                         time_windows=[], depot_capacity=0, vehicle_load_time=0,
                         vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
     """Method to initialize and create the appropriate dataset for the VRP to run.
@@ -127,7 +127,7 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=[]
     lon_lat_struct_of_POIs = vrp_plots.convert_node_ids_to_nodes(selected_dff, solution)
 
 
-def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capacities=[],
+def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capacities=0,
                         time_windows=[], depot_capacity=0, vehicle_load_time=0,
                         vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
     solution = ''
@@ -135,15 +135,23 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
         #solution = combo_vrp(od_dist, num_vehicles, depot, demands, vehicle_capacities, time_windows)
         pass
     elif demands:
+        if not _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
+            print("Not enough capacity in the vehicles!")
         solution = google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities)
     elif _are_there_time_windows(time_windows):
-        solution = google_time_windows_vrp(od_dist, num_vehicles, time_windows)
+        solution = google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_path)
     elif vehicle_load_time:
         #solution = vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
         pass
     else:
         solution = google_basic_vrp(od_dist, num_vehicles)
     return solution
+
+
+def _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
+    if vehicle_capacities * num_vehicles < len(od_dist) * demands:
+        return False
+    return True
 
 
 def _are_there_time_windows(time_windows):
@@ -187,10 +195,12 @@ def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
     gcvrp.capacitated_vrp(data)
 
 
-def google_time_windows_vrp(od_dist, num_vehicles, time_windows):
+def google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_path):
     # create data model for time windows
+    print("solution for tw vrp started")
     data = {}
-    data['time_matrix'] = od_dist
+    # distance matrix is in seconds. divide by 60 for having it in minutes.
+    data['time_matrix'] = (network_operations.compute_distance_matrix(dff_selection_path, annotations='duration')[0])/60 #_get_time_matrix(od_dist, num_vehicles, time_windows) #TODO code it
     data['num_vehicles'] = num_vehicles
     data['depot'] = 0
     data['time_windows'] = _generate_time_windows(od_dist, time_windows)
@@ -231,9 +241,25 @@ def _generate_time_windows(od_dist, time_windows):
     Returns:
         [list]: time windows for data
     """
-    tw = tuple(time_windows)
+    tw = _convert_range_to_time_units(time_windows)
     time_matrix = [tw for elem in range(len(od_dist))]
     return time_matrix
+
+
+def _convert_range_to_time_units(time_windows):
+    """Method to convert a range [8,10] to time units starting
+    from 0. Time units will be minutes. Hence [8, 10] becomes
+    (0, 120) (window in minutes)
+
+    Args:
+        time_windows ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    start, end = time_windows
+    tw_range = (end - start) * 60
+    return (0, tw_range)
 
 
 #### end of help functions in APIs  ####
