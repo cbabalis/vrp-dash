@@ -192,12 +192,15 @@ def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
     data['vehicle_capacities'] = _generate_vehicle_capacities(od_dist, num_vehicles, demands, vehicle_capacities)
     # run capacitated vrp
     import google_vrps.google_cvrp as gcvrp
-    gcvrp.capacitated_vrp(data)
+    solution = gcvrp.capacitated_vrp(data)
+    return solution
 
 
 def google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_path):
+    """ documentation:
+    https://github.com/ustroetz/python-osrm
+    """
     # create data model for time windows
-    print("solution for tw vrp started")
     data = {}
     # distance matrix is in seconds. divide by 60 for having it in minutes.
     data['time_matrix'] = (network_operations.compute_distance_matrix(dff_selection_path, annotations='duration')[0])/60 #_get_time_matrix(od_dist, num_vehicles, time_windows) #TODO code it
@@ -206,7 +209,8 @@ def google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_p
     data['time_windows'] = _generate_time_windows(od_dist, time_windows)
     # run time windows vrp
     import google_vrps.google_twvrp as gtwvrp
-    gtwvrp.time_windows_vrp(data)
+    solution = gtwvrp.time_windows_vrp(data)
+    return solution
 
 ## APIS end
 

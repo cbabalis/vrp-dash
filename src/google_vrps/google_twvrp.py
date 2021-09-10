@@ -2,6 +2,7 @@
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import pdb
 
 
 def print_solution(data, manager, routing, solution):
@@ -29,23 +30,22 @@ def print_solution(data, manager, routing, solution):
     print('Total time of all routes: {}min'.format(total_time))
 
 
-def get_solution(data, manager, routing, solution):
+def get_twvrp_solution(data, manager, routing, solution):
     route_list = {}
-    max_route_distance = 0
+    #time_dimension = routing.GetDimensionOrDie('Time')
+    total_time = 0
     for vehicle_id in range(data['num_vehicles']):
         index = routing.Start(vehicle_id)
         route_list[vehicle_id] = []
-        route_distance = 0
         while not routing.IsEnd(index):
+            #time_var = time_dimension.CumulVar(index)
             route_list[vehicle_id].append(manager.IndexToNode(index))
-            previous_index = index
             index = solution.Value(routing.NextVar(index))
-            route_distance += routing.GetArcCostForVehicle(
-                previous_index, index, vehicle_id)
+            #print("vehicle id is {} while index is {}.".format(vehicle_id, index))
+        #time_var = time_dimension.CumulVar(index)
         route_list[vehicle_id].append(manager.IndexToNode(index))
-        #_set_route_distance(vehicle_id, route_distance, route_list)
+        #total_time += solution.Min(time_var)
     return route_list
-
 
 
 def time_windows_vrp(data):
@@ -111,12 +111,12 @@ def time_windows_vrp(data):
 
     # Print solution on console.
     if solution:
-        print_solution(data, manager, routing, solution)
-        sol = get_solution(data, manager, routing, solution)
+        #print_solution(data, manager, routing, solution)
+        sol = get_twvrp_solution(data, manager, routing, solution)
         return sol
     else:
         print("No solution for twvrp found!")
 
 
 if __name__ == '__main__':
-    main()
+    time_windows_vrp()
