@@ -134,7 +134,6 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
     if demands and _are_there_time_windows(time_windows):
         solution = google_time_windows_capacitated_vrp(od_dist, num_vehicles,
                                                        time_windows, dff_selection_path, demands, vehicle_capacities)
-        #solution = combo_vrp(od_dist, num_vehicles, depot, demands, vehicle_capacities, time_windows)
     elif demands:
         if not _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
             print("Not enough capacity in the vehicles!")
