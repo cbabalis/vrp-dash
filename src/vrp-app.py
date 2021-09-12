@@ -132,8 +132,9 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
                         vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
     solution = ''
     if demands and _are_there_time_windows(time_windows):
+        solution = google_time_windows_capacitated_vrp(od_dist, num_vehicles,
+                                                       time_windows, dff_selection_path, demands, vehicle_capacities)
         #solution = combo_vrp(od_dist, num_vehicles, depot, demands, vehicle_capacities, time_windows)
-        pass
     elif demands:
         if not _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
             print("Not enough capacity in the vehicles!")
@@ -210,6 +211,27 @@ def google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_p
     # run time windows vrp
     import google_vrps.google_twvrp as gtwvrp
     solution = gtwvrp.time_windows_vrp(data)
+    return solution
+
+
+def google_time_windows_capacitated_vrp(od_dist, num_vehicles,
+                                        time_windows, dff_selection_path, demands, vehicle_capacities):
+    print("inside google time windows capacitated vrp!")
+    # create data model for time windows
+    data = {}
+    # distance matrix is in seconds. divide by 60 for having it in minutes.
+    data['time_matrix'] = (network_operations.compute_distance_matrix(dff_selection_path, annotations='duration')[0])/60
+    data['num_vehicles'] = num_vehicles
+    data['depot'] = 0
+    data['time_windows'] = _generate_time_windows(od_dist, time_windows)
+    # generate demands of points of interest
+    data['demands'] = _generate_pois_demands(od_dist, demands)
+    # generate capacity of vehicles
+    data['vehicle_capacities'] = _generate_vehicle_capacities(od_dist,
+                                                              num_vehicles, demands, vehicle_capacities)
+    # run the combined capacitated, time windows VRP
+    import google_vrps.google_twcvrp as gtwcvrp
+    solution = gtwcvrp.time_windows_capacitated_vrp(data)
     return solution
 
 ## APIS end
