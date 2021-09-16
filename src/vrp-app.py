@@ -355,19 +355,19 @@ app.layout = html.Div([
     # end of table
     # vrp parameters
     html.Div([
-        html.Div([
-            html.Div([
-                html.Label("ΕΠΙΛΟΓΗ ΠΑΡΑΜΕΤΡΩΝ VRP",
-                            style={'font-weight': 'bold',
-                                    'fontSize' : '17px'}),
-                dcc.Checklist(
-                    id='vrp-checklist',
-                    options=vrp_options,
-                    value=[]
-                ),
-            ]),
-        ], className='row',
-            style= {'padding-left' : '50px'}),
+        # html.Div([
+        #     html.Div([
+        #         html.Label("ΕΠΙΛΟΓΗ ΠΑΡΑΜΕΤΡΩΝ VRP",
+        #                     style={'font-weight': 'bold',
+        #                             'fontSize' : '17px'}),
+        #         dcc.Checklist(
+        #             id='vrp-checklist',
+        #             options=vrp_options,
+        #             value=[]
+        #         ),
+        #     ]),
+        # ], className='row',
+        #     style= {'padding-left' : '50px'}),
         # simple vrp params
         html.Div([
             html.Div([
@@ -434,56 +434,56 @@ app.layout = html.Div([
             ], className='row',
             style= {'padding-left':'50px','width': '20%', 'display': 'inline-block', 'vertical-align': 'middle'}),
         # end of capacitated and time windows
-        html.Div([
-            html.Div([
-                # depot capacity
-                html.Label("ΕΠΙΛΟΓΗ ΑΛΛΩΝ ΠΑΡΑΜΕΤΡΩΝ VRP",
-                            style={'font-weight': 'bold',
-                                    'fontSize' : '17px'}),
-                html.Label("ΜΕΓΙΣΤΟΣ ΑΡΙΘΜΟΣ ΟΧΗΜΑΤΩΝ ΠΡΟΣ ΤΑΥΤΟΧΡΟΝΗ ΑΝΑΧΩΡΗΣΗ"),
-                dcc.Slider(id='depot_capacity',
-                min=1,
-                max=10,
-                value=2,
-                step=1,
-                marks={
-                    1: {'label': '1', 'style': {'color': '#77b0b1'}},
-                    10: {'label': '10', 'style': {'color': '#f50'}}
-                    }
-                ),
-                html.Div(id='depot_capacity_output', style={'margin-top': 2}),
-                html.Hr(),
-                #vehicle load time
-                html.Label("ΧΡΟΝΟΣ ΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
-                dcc.Slider(id='vehicle_load_time',
-                min=0,
-                max=60,
-                value=0,
-                step=1,
-                marks={
-                    0: {'label': '0', 'style': {'color': '#77b0b1'}},
-                    60: {'label': '60', 'style': {'color': '#f50'}}
-                    }
-                ),
-                html.Div(id='vehicle_load_time_output', style={'margin-top': 2}),
-                # vehicle unload time
-                html.Label("ΧΡΟΝΟΣ ΕΚΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
-                dcc.Slider(id='vehicle_unload_time',
-                min=0,
-                max=60,
-                value=0,
-                step=1,
-                marks={
-                    0: {'label': '0', 'style': {'color': '#77b0b1'}},
-                    60: {'label': '60', 'style': {'color': '#f50'}}
-                    }
-                ),
-                html.Div(id='vehicle_unload_time_output', style={'margin-top': 2}),
-            ]),
-        ], className='row',
-            style= {'padding-left':'50px','width': '20%', 'display': 'inline-block', 'vertical-align': 'middle'}),
-        # end of extra params
-        # extra params
+        # html.Div([
+        #     html.Div([
+        #         # depot capacity
+        #         html.Label("ΕΠΙΛΟΓΗ ΑΛΛΩΝ ΠΑΡΑΜΕΤΡΩΝ VRP",
+        #                     style={'font-weight': 'bold',
+        #                             'fontSize' : '17px'}),
+        #         html.Label("ΜΕΓΙΣΤΟΣ ΑΡΙΘΜΟΣ ΟΧΗΜΑΤΩΝ ΠΡΟΣ ΤΑΥΤΟΧΡΟΝΗ ΑΝΑΧΩΡΗΣΗ"),
+        #         dcc.Slider(id='depot_capacity',
+        #         min=1,
+        #         max=10,
+        #         value=2,
+        #         step=1,
+        #         marks={
+        #             1: {'label': '1', 'style': {'color': '#77b0b1'}},
+        #             10: {'label': '10', 'style': {'color': '#f50'}}
+        #             }
+        #         ),
+        #         html.Div(id='depot_capacity_output', style={'margin-top': 2}),
+        #         html.Hr(),
+        #         #vehicle load time
+        #         html.Label("ΧΡΟΝΟΣ ΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
+        #         dcc.Slider(id='vehicle_load_time',
+        #         min=0,
+        #         max=60,
+        #         value=0,
+        #         step=1,
+        #         marks={
+        #             0: {'label': '0', 'style': {'color': '#77b0b1'}},
+        #             60: {'label': '60', 'style': {'color': '#f50'}}
+        #             }
+        #         ),
+        #         html.Div(id='vehicle_load_time_output', style={'margin-top': 2}),
+        #         # vehicle unload time
+        #         html.Label("ΧΡΟΝΟΣ ΕΚΦΟΡΤΩΣΗΣ ΟΧΗΜΑΤΟΣ"),
+        #         dcc.Slider(id='vehicle_unload_time',
+        #         min=0,
+        #         max=60,
+        #         value=0,
+        #         step=1,
+        #         marks={
+        #             0: {'label': '0', 'style': {'color': '#77b0b1'}},
+        #             60: {'label': '60', 'style': {'color': '#f50'}}
+        #             }
+        #         ),
+        #         html.Div(id='vehicle_unload_time_output', style={'margin-top': 2}),
+        #     ]),
+        # ], className='row',
+        #     style= {'padding-left':'50px','width': '20%', 'display': 'inline-block', 'vertical-align': 'middle'}),
+        # # end of extra params
+        # # extra params
     ],style = {'background-image':image,
                 'background-size':'cover',
                 'background-position':'right'}),
