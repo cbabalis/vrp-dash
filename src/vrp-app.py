@@ -37,6 +37,7 @@ solution_found = False
 
 ## APIS start
 sample_df = []
+depot_df = []
 vrp_options = [
             {'label': 'Time Windows', 'value': 'tw'},
             {'label': 'Capacitated', 'value': 'capacitated'},
@@ -61,7 +62,7 @@ def load_matrix(selected_matrix, delim='\t', pre_path='data/'):
     return sample_df
 
 
-def get_table_selections(selected_dataset, selected_names):
+def get_table_selections(selected_dataset, selected_names, pre_path='data/', filter_col='brand:en'):
     """Method to get all table parameters and to return a selection of them.
 
     Args:
@@ -72,8 +73,7 @@ def get_table_selections(selected_dataset, selected_names):
     """
     if selected_names:
         print("type of selected_names is ", type(selected_names))
-    dff = load_matrix(selected_dataset)
-    filter_col = 'brand:en'
+    dff = load_matrix(selected_dataset, pre_path=pre_path)
     dff = dff[dff[filter_col].isin(selected_names)]
     #dff[pd.DataFrame(dff[filter_col].tolist()).isin(selected_names).any(1).values]
     #dff = dff[dff[filter_col] == selected_names]
@@ -335,6 +335,7 @@ app.layout = html.Div([
                             "margin-left": "auto",
                             "margin-right": "auto",
                 }), # style solution here: https://stackoverflow.com/questions/51193845/moving-objects-bar-chart-using-dash-python
+            # depot available datasets and title
         ], className='six columns'),
         html.Div([
             html.Label("ΕΠΙΛΟΓΗ ΥΠΟΣΥΝΟΛΟΥ",
@@ -345,6 +346,32 @@ app.layout = html.Div([
         ], className='three columns'),
     ], className='row',
                 style= {'padding-left' : '50px'}), # closes the div for first line (matrix and year)
+    # second row (depots)
+    html.Div([
+        html.Div([
+            html.Label("ΔΙΑΘΕΣΙΜΑ ΣΥΝΟΛΑ ΣΗΜΕΙΩΝ ΕΚΚΙΝΗΣΗΣ",
+                style={'font-weight': 'bold',
+                        'fontSize' : '17px',
+                        'margin-left':'auto',
+                        'margin-right':'auto',
+                        'display':'block'}),
+            dcc.Dropdown(id='depot-dataset-availability-radio',
+                        style={"display": "block",
+                            "margin-left": "auto",
+                            "margin-right": "auto",
+                }), # style solution here: https://stackoverflow.com/questions/51193845/moving-objects-bar-chart-using-dash-python
+            # depot available datasets and title
+        ], className='six columns'),
+        html.Div([
+            html.Label("ΕΠΙΛΟΓΗ ΣΗΜΕΙΟΥ ΕΚΚΙΝΗΣΗΣ",
+                    style={'font-weight': 'bold',
+                            'fontSize' : '17px'}),
+            dcc.Dropdown(id='depot-name-availability-radio',
+                         multi=True,),
+        ], className='three columns'),
+    ], className='row',
+                style= {'padding-left' : '50px'}),
+    # end of second row (depots)
     html.Hr(),
     html.Button('ΚΑΤΑΧΩΡΗΣΗ ΣΥΝΟΛΟΥ ΔΕΔΟΜΕΝΩΝ ΚΑΙ ΕΠΙΛΟΓΩΝ', id='submit-val', n_clicks=0, style=white_button_style),
     html.Hr(),
@@ -513,6 +540,19 @@ def get_list_of_dataset_files(selected_dataset):
 
 
 @app.callback(
+    Output('depot-dataset-availability-radio', 'options'),
+    Input('depot-dataset-availability-radio', 'value'))
+def get_list_of_depot_dataset_files(selected_dataset):
+    """ Method to get the dataset files found on disk.
+    """
+    # get files from given datapath
+    my_path = 'depot_data/'
+    onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
+    # return all files found in folder
+    return [{'label': i, 'value': i} for i in onlyfiles]
+
+
+@app.callback(
     Output('name-availability-radio', 'options'),
     [Input('dataset-availability-radio', 'value'),
     Input('name-availability-radio', 'value')])
@@ -528,22 +568,42 @@ def set_products_options(selected_matrix, selected_country):
 
 
 @app.callback(
+    Output('depot-name-availability-radio', 'options'),
+    [Input('depot-dataset-availability-radio', 'value'),
+    Input('depot-name-availability-radio', 'value')])
+def set_depots_options(selected_matrix, selected_country):
+    # have dataset as global
+    global depot_df
+    depot_df = load_matrix(selected_matrix, pre_path='depot_data/')
+    if not selected_matrix:
+        return "No matrix has been selected."
+    else:
+        filter_col = 'brand:en'
+        return [{'label': i, 'value': i} for i in depot_df[filter_col].unique()]
+
+
+@app.callback(
     Output('display_supermarkets_table', 'children'),
     [Input('submit-val', 'n_clicks')],
     [State('dataset-availability-radio', 'value'),
-    State('name-availability-radio', 'value')
+    State('name-availability-radio', 'value'),
+    State('depot-dataset-availability-radio', 'value'),
+    State('depot-name-availability-radio', 'value')
     ])
-def set_display_table(n_clicks, selected_dataset, selected_names):
+def set_display_table(n_clicks, selected_dataset, selected_names,
+                      depot_selected_dataset, depot_selected_names):
     # todo code here
     dff = get_table_selections(selected_dataset, selected_names)
     # assign dff selection to selected dff for further operations.
     global selected_dff
-    selected_dff = dff.copy()
+    # add to selected dff the depot
+    depot_df = get_table_selections(depot_selected_dataset, depot_selected_names, pre_path='depot_data/')
+    selected_dff = depot_df.append(dff)
     return html.Div([
         dash_table.DataTable(
             id='main-table',
             columns=[{'name': i, 'id': i, 'hideable':True} for i in dff.columns],
-             data=dff.to_dict('rows'),
+             data=selected_dff.to_dict('rows'),
              editable=True,
              filter_action='native',
              sort_action='native',

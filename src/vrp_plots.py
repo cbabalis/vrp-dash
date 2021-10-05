@@ -72,17 +72,14 @@ def plot_vehicles_with_routes(veh_node_dict):
             continue
         # get color for the current vehicle
         col = colorscales.pop()
-        # if not fig:
-        #     lon = veh_node_dict[0][0]['longitude']
-        #     lat = veh_node_dict[0][0]['latitude']
-        #    fig = _initialize_figure(lon, lat, col)
-        # create paths for each vehicle and add them to the figure
-        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, veh_id=vehicle, colorlist=css_cols)
+        paint_vehicle_route(fig, veh_node_dict[vehicle], graph, veh_id=vehicle, colorlist=colorscales)
     # return the final figure
     return fig
 
 
 def _initialize_figure(lon, lat, col):
+    """ method probably deprecated. TODO check it
+    """
     fig = go.Figure(go.Scattermapbox(
         name = "Path",
         mode = "lines",
