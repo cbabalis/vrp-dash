@@ -39,7 +39,7 @@ solution_found = False
 sample_df = []
 depot_df = []
 vrp_options = [
-            {'label': 'Χρονοπαράθυρα', 'value': 'tw'},
+            {'label': 'Χρονοπαράθυρα', 'value': 'timewindows'},
             {'label': 'Ζήτηση', 'value': 'capacitated'},
             #{'label': 'Pickups and Deliveries', 'value': 'pickdel'}
 ]

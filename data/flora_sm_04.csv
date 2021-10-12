@@ -1,0 +1,51 @@
+longitude	latitude	time windows	official_tw	demand	id	@id	brand	brand:el	brand:en	brand:wikidata	brand:wikipedia	building	currency:EUR	name	name:el	name:en	opening_hours	opening_hours:covid19	shop	addr:city	addr:housenumber	addr:postcode	addr:street	payment:cash	payment:debit_cards	phone	website	alt_name	addr:city:el	addr:city:en	addr:country	operator	branch	int_name	source	wheelchair	building:levels	delivery	email	addr:province	amenity	facebook	parking	twitter	payment:cards	payment:credit_cards	condition	level	organic	landuse	addr:district	short_name	short_name:en	contact:phone	addr:unit	vegan	old_name	payment:coins	payment:mastercard	payment:notes	payment:visa	recycling_type	name:de	name:ru	atm	indoor	cuisine	note	ref	addr:interpolation	toilets:wheelchair	addr:place	addr:neighborhood	name:int	contact:website	payment:credit_card	diet:vegan	start_date	clothes	description	internet_access	contact:facebook	contact:messenger	vegetarian	payment:bitcoin	name:ko	payment:american_express	payment:contactless	payment:diners_club	payment:visa_electron
+23.84999705	37.9865647	"[7,21]"	[7:00-21:00]	8										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Γλυκά Νερά																																																																						
+23.74948349	38.0251802	"[7,21]"	[7:00-21:00]	1										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Αθήνα																																																																						
+23.68869615	38.00857572	"[7,21]"	[7:00-21:00]	1										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Περιστέρι																																																																						
+23.7477478	37.97179033	"[10,21]"	[10:30-21:00]	1										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Αθήνα																																																																						
+23.782559	38.04922013	"[7,21]"	[7:00-21:00]	4										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Ηράκλειο																																																																						
+23.7012226	38.03105343	"[7,21]"	[7:00-21:00]	6										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Ίλιον																																																																						
+23.6883468	37.94762903	"[7,21]"	[7:00-21:00]	2										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Καλλιθέα																																																																						
+23.7419461	38.04246933	"[7,21]"	[7:00-21:00]	2										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Νέα Φιλαδέλφεια																																																																						
+23.8062548	38.00900443	"[7,21]"	[7:00-21:00]	1										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Αγία Παρασκευή																																																																						
+23.6178466	37.95904203	"[7,21]"	[7:00-21:00]	8										AB Vassilopoulos	AB Vassilopoulos	AB Vassilopoulos				Κερατσίνι																																																																						
+23.6274231	37.97275813	"[7,21]"	[7:00-21:00]	2										Kritikos	Kritikos	Kritikos				Κερατσίνι																																																																						
+23.742597	37.97644753	"[10,21]"	[10:30-21:00]	1										Kritikos	Kritikos	Kritikos				Αθήνα																																																																						
+23.8008908	38.01695133	"[7,21]"	[7:00-21:00]	4										Kritikos	Kritikos	Kritikos				Χαλάνδρι																																																																						
+23.7558666	37.98334103	"[10,21]"	[10:30-21:00]	1										Kritikos	Kritikos	Kritikos				Αθήνα																																																																						
+23.7148046	37.92186593	"[7,21]"	[7:00-21:00]	1										Kritikos	Kritikos	Kritikos				Παλαιό Φάληρο																																																																						
+23.7672204	37.99112083	"[7,21]"	[7:00-21:00]	1										Kritikos	Kritikos	Kritikos				Αθήνα																																																																						
+23.5715382	37.96393813	"[7,21]"	[7:00-21:00]	2										Kritikos	Kritikos	Kritikos				Πέραμα																																																																						
+23.7634152	37.88192003	"[7,21]"	[7:00-21:00]	4										Kritikos	Kritikos	Kritikos				Γλυφάδα																																																																						
+23.7915317	38.05921243	"[7,21]"	[7:00-21:00]	2										Kritikos	Kritikos	Kritikos				Πεύκη																																																																						
+23.8341015	38.03378613	"[7,21]"	[7:00-21:00]	1										Kritikos	Kritikos	Kritikos				Βριλήσσια																																																																						
+23.75019973	38.04107394	"[7,21]"	[7:00-21:00]	3										Market In	Market In	Market In				Νέα Ιωνία																																																																						
+23.69310208	38.0291352	"[7,21]"	[7:00-21:00]	3										Market In	Market In	Market In				Ίλιον																																																																						
+23.7570583	37.96472533	"[7,21]"	[7:00-21:00]	2										Market In	Market In	Market In				Καισαριανή																																																																						
+23.7744961	37.97375363	"[7,21]"	[7:00-21:00]	1										Market In	Market In	Market In				Ζωγράφου																																																																						
+23.7086926	37.94943433	"[7,21]"	[7:00-21:00]	4										Market In	Market In	Market In				Νέα Σμύρνη																																																																						
+23.7089511	37.96771663	"[10,21]"	[10:30-21:00]	1										Market In	Market In	Market In				Αθήνα																																																																						
+23.822835	38.00483083	"[7,21]"	[7:00-21:00]	2										Market In	Market In	Market In				Αγία Παρασκευή																																																																						
+23.8231777	38.02569433	"[7,21]"	[7:00-21:00]	4										Market In	Market In	Market In				Χαλάνδρι																																																																						
+23.7624375	38.06510663	"[7,21]"	[7:00-21:00]	1										Market In	Market In	Market In				Μεταμόρφωση																																																																						
+23.6968209	37.96347633	"[7,21]"	[7:00-21:00]	2										Market In	Market In	Market In				Ταύρος																																																																						
+23.73387239	38.00112548	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Αθήνα																																																																						
+23.7603626	37.98868953	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Αμπελόκηποι																																																																						
+23.6922629	37.92576033	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Παλαιό Φάληρο																																																																						
+23.7362106	38.02300073	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Ανω Πατήσια																																																																						
+23.7266224	37.97792453	"[14,17]"	"[7:00-10:30],[14:30-17:30]"	1										Masoutis	Masoutis	Masoutis				Αθήνα																																																																						
+23.8009731	38.01040333	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Βριλήσσια																																																																						
+23.745441	38.01636383	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Γαλάτσι																																																																						
+23.7977463	38.01373263	"[7,21]"	[7:00-21:00]	4										Masoutis	Masoutis	Masoutis				Χαλάνδρι																																																																						
+23.7353959	37.97850013	"[10,21]"	[10:30-21:00]	1										Masoutis	Masoutis	Masoutis				Αθήνα																																																																						
+23.7587003	38.06071553	"[7,21]"	[7:00-21:00]	1										Masoutis	Masoutis	Masoutis				Μεταμόρφωση																																																																						
+23.76507075	37.8920058	"[7,21]"	[7:00-21:00]	4										Sklavenitis	Sklavenitis	Sklavenitis				Γλυφάδα																																																																						
+23.80033399	38.08736138	"[7,21]"	[7:00-21:00]	6										Sklavenitis	Sklavenitis	Sklavenitis				Κηφισιά																																																																						
+23.72633384	37.91883856	"[7,21]"	[7:00-21:00]	1										Sklavenitis	Sklavenitis	Sklavenitis				Άλιμος																																																																						
+23.71339273	38.06309534	"[7,21]"	[7:00-21:00]	3										Sklavenitis	Sklavenitis	Sklavenitis				Καματερό																																																																						
+23.7468829	37.98893793	"[10,21]"	[10:30-21:00]	1										Sklavenitis	Sklavenitis	Sklavenitis				Αθήνα																																																																						
+23.7377588	37.94909153	"[7,21]"	[7:00-21:00]	2										Sklavenitis	Sklavenitis	Sklavenitis				Άγιος Δημήτριος																																																																						
+23.6749738	37.98662053	"[7,21]"	[7:00-21:00]	3										Sklavenitis	Sklavenitis	Sklavenitis				Αιγάλεω																																																																						
+23.8213046	38.09172743	"[7,21]"	[7:00-21:00]	6										Sklavenitis	Sklavenitis	Sklavenitis				Νέα Ερυθραία																																																																						
+23.6796249	37.95332973	"[7,21]"	[7:00-21:00]	2										Sklavenitis	Sklavenitis	Sklavenitis				Μοσχάτο																																																																						
+23.7277296	37.95241013	"[7,21]"	[7:00-21:00]	3										Sklavenitis	Sklavenitis	Sklavenitis				Δάφνη																																																																						
