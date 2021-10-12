@@ -1,7 +1,7 @@
 longitude	latitude	time windows	demand	id	@id	brand	brand:el	brand:en	brand:wikidata	brand:wikipedia	building	currency:EUR	name	name:el	name:en	opening_hours	opening_hours:covid19	shop	addr:city	addr:housenumber	addr:postcode	addr:street	payment:cash	payment:debit_cards	phone	website	alt_name	addr:city:el	addr:city:en	addr:country	operator	branch	int_name	source	wheelchair	building:levels	delivery	email	addr:province	amenity	facebook	parking	twitter	payment:cards	payment:credit_cards	condition	level	organic	landuse	addr:district	short_name	short_name:en	contact:phone	addr:unit	vegan	old_name	payment:coins	payment:mastercard	payment:notes	payment:visa	recycling_type	name:de	name:ru	atm	indoor	cuisine	note	ref	addr:interpolation	toilets:wheelchair	addr:place	addr:neighborhood	name:int	contact:website	payment:credit_card	diet:vegan	start_date	clothes	description	internet_access	contact:facebook	contact:messenger	vegetarian	payment:bitcoin	name:ko	payment:american_express	payment:contactless	payment:diners_club	payment:visa_electron
-23.51457157	38.06856608							AB Vassilopoulos					�� ������������																																																																												
-23.919411	37.86837719							Masoutis					��������																																																																												
-23.50195527	38.04016312							Sklavenitis					�����������																																																																												
-23.92209505	37.88734769							Market In					Market In																																																																												
-23.5263873	38.08712165							Kritikos					��������																																																																												
-23.61436773	38.08194425							Thriasio					Thriasio																																																																												
+23.51457157	38.06856608	[6,22]	0					AB Vassilopoulos					�� ������������																																																																												
+23.919411	37.86837719	[6,22]	0					Masoutis					��������																																																																												
+23.50195527	38.04016312	[6,22]	0					Sklavenitis					�����������																																																																												
+23.92209505	37.88734769	[6,22]	0					Market In					Market In																																																																												
+23.5263873	38.08712165	[6,22]	0					Kritikos					��������																																																																												
+23.61436773	38.08194425	[6,22]	0					Thriasio					Thriasio																																																																												

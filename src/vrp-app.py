@@ -39,9 +39,9 @@ solution_found = False
 sample_df = []
 depot_df = []
 vrp_options = [
-            {'label': 'Time Windows', 'value': 'tw'},
-            {'label': 'Capacitated', 'value': 'capacitated'},
-            {'label': 'Pickups and Deliveries', 'value': 'pickdel'}
+            {'label': 'Χρονοπαράθυρα', 'value': 'tw'},
+            {'label': 'Ζήτηση', 'value': 'capacitated'},
+            #{'label': 'Pickups and Deliveries', 'value': 'pickdel'}
 ]
 
 def load_matrix(selected_matrix, delim='\t', pre_path='data/'):
@@ -96,7 +96,8 @@ def create_distance_matrix_from_selection(dff):
 
 def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=0,
                         time_windows=[], depot_capacity=0, vehicle_load_time=0,
-                        vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
+                        vehicle_unload_time=0, params_from_db=[],
+                        dff_selection_path='results/selection.csv'):
     """Method to initialize and create the appropriate dataset for the VRP to run.
 
     Args:
@@ -108,6 +109,8 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=0,
         depot_capacity (int, optional): [description]. Defaults to 0.
         vehicle_load_time (int, optional): [description]. Defaults to 0.
         vehicle_unload_time (int, optional): [description]. Defaults to 0.
+        params_from_db (list, optional): List of parameters that should be read
+        from database. Defaults to [].
     """
     # prepare data in order to be run by google or vrp.
     selected_dff.to_csv(dff_selection_path, sep='\t')
@@ -118,7 +121,8 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=0,
     solution_found = False
     solution = _select_vrp_params(od_dist, num_vehicles, depot, demands,
                                   vehicle_capacities, time_windows, depot_capacity,
-                                  vehicle_load_time,vehicle_unload_time, dff_selection_path)#google_basic_vrp(od_dist, num_vehicles)
+                                  vehicle_load_time,vehicle_unload_time,
+                                  params_from_db, dff_selection_path)#google_basic_vrp(od_dist, num_vehicles)
     if solution:
         print("solution has been found!")
         solution_found = True
@@ -129,8 +133,9 @@ def call_vrp_parameters(num_vehicles, depot=0, demands=[], vehicle_capacities=0,
 
 def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capacities=0,
                         time_windows=[], depot_capacity=0, vehicle_load_time=0,
-                        vehicle_unload_time=0, dff_selection_path='results/selection.csv'):
+                        vehicle_unload_time=0, params_from_db=[], dff_selection_path='results/selection.csv'):
     solution = ''
+    demands = _get_demands(demands, params_from_db)
     if demands and _are_there_time_windows(time_windows):
         solution = google_time_windows_capacitated_vrp(od_dist, num_vehicles,
                                                        time_windows, dff_selection_path, demands, vehicle_capacities)
@@ -148,8 +153,27 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
     return solution
 
 
+def _get_demands(demands, params_from_db):
+    """ method to check if there are any demands (either from the data or from
+    the slider)
+    """
+    if 'capacitated' in params_from_db:
+        if sample_df.empty:
+            print("sample df is empty! no table selected")
+            return demands
+        return sample_df['demand'].tolist()
+    else:
+        return demands
+
+
 def _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
-    if vehicle_capacities * num_vehicles < len(od_dist) * demands:
+    total_demands = 0
+    if type(demands) is list:
+        total_demands = sum(demands)
+    else:
+        total_demands = demands * len(od_dist)
+    print("total demands is", total_demands)
+    if vehicle_capacities * num_vehicles < total_demands:
         return False
     return True
 
@@ -238,19 +262,18 @@ def google_time_windows_capacitated_vrp(od_dist, num_vehicles,
 ####  help functions in APIs  ####
 
 def _generate_pois_demands(od_dist, demands, randomness=0):
-    if not randomness:
+    if type(demands) is not list:
+        print("demands from slider")
         demands_list = [demands for demand in range(len(od_dist))]
         return demands_list
     else:
-        #TODO randomness should be implemented
-        print("no randomness has been implemented!")
-        demands_list = [demands for demand in range(len(od_dist))]
+        demands_list = demands
         return demands_list
 
 
 def _generate_vehicle_capacities(od_dist, num_vehicles, demands, vehicle_capacities, randomness=0):
     # TODO no implementation of randomness yet
-    assert vehicle_capacities * num_vehicles > len(od_dist) * demands, "not enough capacity"
+    assert _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities), "not enough capacity"
     if not randomness:
         capacities = [vehicle_capacities for cap in range(num_vehicles)]
         return capacities
@@ -382,19 +405,19 @@ app.layout = html.Div([
     # end of table
     # vrp parameters
     html.Div([
-        # html.Div([
-        #     html.Div([
-        #         html.Label("ΕΠΙΛΟΓΗ ΠΑΡΑΜΕΤΡΩΝ VRP",
-        #                     style={'font-weight': 'bold',
-        #                             'fontSize' : '17px'}),
-        #         dcc.Checklist(
-        #             id='vrp-checklist',
-        #             options=vrp_options,
-        #             value=[]
-        #         ),
-        #     ]),
-        # ], className='row',
-        #     style= {'padding-left' : '50px'}),
+        html.Div([
+            html.Div([
+                html.Label("ΕΠΙΛΟΓΗ ΠΑΡΑΜΕΤΡΩΝ VRP από τη Βάση",
+                            style={'font-weight': 'bold',
+                                    'fontSize' : '17px'}),
+                dcc.Checklist(
+                    id='vrp_checklist',
+                    options=vrp_options,
+                    value=[]
+                ),
+            ]),
+        ], className='row',
+            style= {'padding-left' : '50px'}),
         # simple vrp params
         html.Div([
             html.Div([
@@ -687,9 +710,10 @@ def display_value(value):
     [State('num_vehicles', 'value'),
      State('demand', 'value'),
      State('capacity', 'value'),
-     State('tw_range_slider', 'value')])
-def update_output(click_value, num_vehicles, demand, capacity, tw_range):
-    call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity, time_windows=tw_range)
+     State('tw_range_slider', 'value'),
+     State('vrp_checklist', 'value')])
+def update_output(click_value, num_vehicles, demand, capacity, tw_range, vrp_checklist):
+    call_vrp_parameters(num_vehicles, depot=0, demands=demand, vehicle_capacities=capacity, time_windows=tw_range, params_from_db=vrp_checklist)
 
 
 @app.callback(Output('vrp-solution-state', 'children'),
