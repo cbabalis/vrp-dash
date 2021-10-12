@@ -135,7 +135,9 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
                         time_windows=[], depot_capacity=0, vehicle_load_time=0,
                         vehicle_unload_time=0, params_from_db=[], dff_selection_path='results/selection.csv'):
     solution = ''
+    # select demands and time windows either from csv file (db) or from sliders
     demands = _get_demands(demands, params_from_db)
+    time_windows = _get_time_windows(time_windows, params_from_db)
     if demands and _are_there_time_windows(time_windows):
         solution = google_time_windows_capacitated_vrp(od_dist, num_vehicles,
                                                        time_windows, dff_selection_path, demands, vehicle_capacities)
@@ -166,6 +168,20 @@ def _get_demands(demands, params_from_db):
         return demands
 
 
+def _get_time_windows(time_windows, params_from_db):
+    """ method to check if there are any time windows (either from the data or
+    from the slider.)
+    """
+    if 'timewindows' in params_from_db:
+        if sample_df.empty:
+            print("sample df is empty! no table selected")
+            return time_windows
+        # return column
+        return sample_df['time windows'].apply(eval).tolist()
+    else:
+        return time_windows
+
+
 def _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
     total_demands = 0
     if type(demands) is list:
@@ -179,11 +195,15 @@ def _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
 
 
 def _are_there_time_windows(time_windows):
-    assert len(time_windows) == 2, "time windows list is empty!"
-    start_time, end_time = time_windows
-    if (start_time == end_time) or (len(time_windows) != 2):
-        return False
-    return True
+    if type(time_windows) is list and len(time_windows)>1:
+        return True
+    return False
+    ### deprecated code!
+    # assert len(time_windows) == 2, "time windows list is empty!"
+    # start_time, end_time = time_windows
+    # if (start_time == end_time) or (len(time_windows) != 2):
+    #     return False
+    # return True
 
 
 def google_basic_vrp(od_dist, num_vehicles):
@@ -285,12 +305,23 @@ def _generate_time_windows(od_dist, time_windows):
     Args:
         od_dist (list): list of lists representing od matrix.
         time_windows (list): list containing two numbers of time window [min, max]
+                OR a list of lists of time windows [[min1, max1], [min2, max2]]
 
     Returns:
         [list]: time windows for data
     """
-    tw = _convert_range_to_time_units(time_windows)
-    time_matrix = [tw for elem in range(len(od_dist))]
+    # initialize time matrix as empty list
+    time_matrix = []
+    # if time_windows is set in database this means it is a list of lits.
+    # so iterate each list of lists and add it to time matrix.
+    # else, do it from slider.
+    if len(time_windows) > 2:
+        for ti_wi in time_windows:
+            tw = _convert_range_to_time_units(ti_wi)
+            time_matrix.append(tw)
+    else:
+        tw = _convert_range_to_time_units(time_windows)
+        time_matrix = [tw for elem in range(len(od_dist))]
     return time_matrix
 
 
