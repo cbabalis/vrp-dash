@@ -30,7 +30,7 @@ import time
 
 ## variables
 image = 'url("assets/Banner_Fleet.jpg")'
-selected_dff = []
+selected_dff = pd.DataFrame()
 lon_lat_struct_of_POIs = ''
 solution_found = False
 
@@ -138,14 +138,14 @@ def _select_vrp_params(od_dist, num_vehicles, depot=0, demands=[], vehicle_capac
     # select demands and time windows either from csv file (db) or from sliders
     demands = _get_demands(demands, params_from_db)
     time_windows = _get_time_windows(time_windows, params_from_db)
-    if demands and _are_there_time_windows(time_windows):
+    if demands and _are_there_time_windows(time_windows, params_from_db):
         solution = google_time_windows_capacitated_vrp(od_dist, num_vehicles,
                                                        time_windows, dff_selection_path, demands, vehicle_capacities)
     elif demands:
         if not _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
             print("Not enough capacity in the vehicles!")
         solution = google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities)
-    elif _are_there_time_windows(time_windows):
+    elif _are_there_time_windows(time_windows, params_from_db):
         solution = google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_path)
     elif vehicle_load_time:
         #solution = vrp_extra_params(num_vehicles, vehicle_load_time, vehicle_unload_time, depot_capacity)
@@ -194,16 +194,17 @@ def _is_capacity_enough(od_dist, num_vehicles, demands, vehicle_capacities):
     return True
 
 
-def _are_there_time_windows(time_windows):
-    if type(time_windows) is list and len(time_windows)>1:
+def _are_there_time_windows(time_windows, params_from_db):
+    # first check if the user needs time windows from the list
+    if 'timewindows' in params_from_db:
+        print("time windows are coming from csv.")
         return True
-    return False
-    ### deprecated code!
-    # assert len(time_windows) == 2, "time windows list is empty!"
-    # start_time, end_time = time_windows
-    # if (start_time == end_time) or (len(time_windows) != 2):
-    #     return False
-    # return True
+    else:
+        assert len(time_windows) == 2, "time windows list is empty!"
+        start_time, end_time = time_windows
+        if (start_time == end_time) or (len(time_windows) != 2):
+            return False
+        return True
 
 
 def google_basic_vrp(od_dist, num_vehicles):
@@ -226,6 +227,7 @@ def google_basic_vrp(od_dist, num_vehicles):
 
 
 def google_capacitated_vrp(od_dist, num_vehicles, demands, vehicle_capacities):
+    print("inside google capacitated vrp!")
     data = {}
     data['distance_matrix'] = od_dist
     data['num_vehicles'] = num_vehicles
@@ -244,6 +246,7 @@ def google_time_windows_vrp(od_dist, num_vehicles, time_windows, dff_selection_p
     """ documentation:
     https://github.com/ustroetz/python-osrm
     """
+    print("inside google time windows vrp!")
     # create data model for time windows
     data = {}
     # distance matrix is in seconds. divide by 60 for having it in minutes.

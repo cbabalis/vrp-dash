@@ -10,12 +10,15 @@
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import google_vrps.google_basic_ops as gbo
 import flora
 import pdb
 
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
+    # create a file in order to save the solution steps.
+    sol_fpath = gbo.create_results_name()
     print(f'Objective: {solution.ObjectiveValue()}')
     max_route_distance = 0
     for vehicle_id in range(data['num_vehicles']):
@@ -31,8 +34,10 @@ def print_solution(data, manager, routing, solution):
         plan_output += '{}\n'.format(manager.IndexToNode(index))
         plan_output += 'Distance of the route: {}m\n'.format(route_distance)
         print(plan_output)
+        gbo.write_solution_to_file(sol_fpath, plan_output)
         max_route_distance = max(route_distance, max_route_distance)
     print('Maximum of the route distances: {}m'.format(max_route_distance))
+    gbo.write_solution_to_file(sol_fpath, "route distance: "+str(max_route_distance))
 
 
 def get_solution(data, manager, routing, solution):

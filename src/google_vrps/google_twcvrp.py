@@ -2,11 +2,15 @@
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import sys
+import google_vrps.google_basic_ops as gbo
 import pdb
 
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
+    # create a file in order to save the solution steps.
+    sol_fpath = gbo.create_results_name()
     print(f'Objective: {solution.ObjectiveValue()}')
     time_dimension = routing.GetDimensionOrDie('Time')
     total_time = 0
@@ -26,8 +30,10 @@ def print_solution(data, manager, routing, solution):
         plan_output += 'Time of the route: {}min\n'.format(
             solution.Min(time_var))
         print(plan_output)
+        gbo.write_solution_to_file(sol_fpath, plan_output)
         total_time += solution.Min(time_var)
     print('Total time of all routes: {}min'.format(total_time))
+    gbo.write_solution_to_file(sol_fpath, "total trip time is "+str(total_time))
 
 
 def get_twcvrp_solution(data, manager, routing, solution):
@@ -76,7 +82,7 @@ def time_windows_capacitated_vrp(data):
     routing.AddDimension(
         transit_callback_index,
         300,  # allow waiting time
-        300,  # maximum time per vehicle
+        1200, #300,  # maximum time per vehicle
         False,  # Don't force start cumul to zero.
         time)
     time_dimension = routing.GetDimensionOrDie(time)
@@ -85,7 +91,9 @@ def time_windows_capacitated_vrp(data):
         if location_idx == data['depot']:
             continue
         index = manager.NodeToIndex(location_idx)
-        time_dimension.CumulVar(index).SetRange(time_window[0], time_window[1])
+        print("window before blowing out: ", time_window[0], " ", time_window[1], " and loc idx: ", location_idx, " and index is ", index)
+        if index == location_idx:
+            time_dimension.CumulVar(index).SetRange(time_window[0], time_window[1])
     # Add time window constraints for each vehicle start node.
     depot_idx = data['depot']
     for vehicle_id in range(data['num_vehicles']):
@@ -133,7 +141,7 @@ def time_windows_capacitated_vrp(data):
 
     # Print solution on console.
     if solution:
-        #print_solution(data, manager, routing, solution)
+        print_solution(data, manager, routing, solution)
         sol = get_twcvrp_solution(data, manager, routing, solution)
         return sol
     else:

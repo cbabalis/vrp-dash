@@ -2,11 +2,14 @@
 
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
+import google_vrps.google_basic_ops as gbo # for common printing
 import pdb
 
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
+    # create a file in order to save the solution steps.
+    sol_fpath = gbo.create_results_name()
     print(f'Objective: {solution.ObjectiveValue()}')
     total_distance = 0
     total_load = 0
@@ -28,10 +31,14 @@ def print_solution(data, manager, routing, solution):
         plan_output += 'Distance of the route: {}m\n'.format(route_distance)
         plan_output += 'Load of the route: {}\n'.format(route_load)
         print(plan_output)
+        gbo.write_solution_to_file(sol_fpath, plan_output)
         total_distance += route_distance
         total_load += route_load
     print('Total distance of all routes: {}m'.format(total_distance))
     print('Total load of all routes: {}'.format(total_load))
+    dist_load = "total_distance of all routes is " + str(total_distance) +\
+        "m and total load of all routes is " + str(total_load)
+    gbo.write_solution_to_file(sol_fpath, dist_load)
 
 
 def get_solution(data, manager, routing, solution):
