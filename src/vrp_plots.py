@@ -60,10 +60,10 @@ def plot_vehicles_with_routes(veh_node_dict):
     """
     # initialize graph and figure
     fig = ''
-    graph_filepath = '/home/blaxeep/workspace/osm_project/results/greece-athens.graphml'
+    graph_filepath = 'data/greece-athens.graphml'
     graph = net_ops.load_graph_from_disk(graph_filepath)
     # initialize color of each line.
-    colorscales = css_cols
+    colorscales = [col for col in css_cols]
     # initialize figure
     fig = go.Figure()
     for vehicle in veh_node_dict:
