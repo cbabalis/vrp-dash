@@ -813,15 +813,9 @@ def print_vrp_to_map(click_value):
 @app.callback(
     Output('solutions_available', 'options'),
     Input('solutions_available', 'value'))
-def set_products_options(selected_country):
+def get_solution_options(selected_country):
     prod_cons_files = [f for f in listdir(results_path) if isfile(join(results_path, f))] #uploaded_files(prod_cons_path)
     return [{'label': i, 'value': i} for i in prod_cons_files]
-
-
-def file_download_link(filename):
-    """Create a Plotly Dash 'A' element that downloads a file from the app."""
-    location = "/download/{}".format(urlquote(filename))
-    return html.A(filename, href=location)
 
 
 @app.callback(
@@ -834,7 +828,6 @@ def func(n_clicks, solution_available):
     solution_to_download = results_path + solution_available
     print("solution available is ", solution_to_download)
     return send_file(solution_to_download)
-    #return html.Li(file_download_link(solution_available))
 
 
 
