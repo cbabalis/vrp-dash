@@ -11,6 +11,7 @@ def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
     # create a file in order to save the solution steps.
     sol_fpath = gbo.create_results_name()
+    print("solution name filepath is ", sol_fpath)
     print(f'Objective: {solution.ObjectiveValue()}')
     time_dimension = routing.GetDimensionOrDie('Time')
     total_time = 0

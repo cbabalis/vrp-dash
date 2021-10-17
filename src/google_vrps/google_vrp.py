@@ -123,7 +123,7 @@ def google_vrp(data):
 
     # Print solution on console.
     if solution:
-        #print_solution(data, manager, routing, solution)
+        print_solution(data, manager, routing, solution)
         # get solution and return it
         sol = get_solution(data, manager, routing, solution)
         return sol

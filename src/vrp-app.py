@@ -812,8 +812,8 @@ def print_vrp_to_map(click_value):
 
 @app.callback(
     Output('solutions_available', 'options'),
-    Input('solutions_available', 'value'))
-def get_solution_options(selected_country):
+    Input('solutions_available', 'value'),)
+def get_solution_options(selected_sols):
     prod_cons_files = [f for f in listdir(results_path) if isfile(join(results_path, f))] #uploaded_files(prod_cons_path)
     return [{'label': i, 'value': i} for i in prod_cons_files]
 

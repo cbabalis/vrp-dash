@@ -10,6 +10,7 @@ def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
     # create a file in order to save the solution steps.
     sol_fpath = gbo.create_results_name()
+    print("solution name filepath is ", sol_fpath)
     print(f'Objective: {solution.ObjectiveValue()}')
     total_distance = 0
     total_load = 0
@@ -135,7 +136,7 @@ def capacitated_vrp(cvrp_data):
 
     # Print solution on console.
     if solution:
-        #print_solution(data, manager, routing, solution)
+        print_solution(data, manager, routing, solution)
         sol = get_solution(data, manager, routing, solution)
         return sol
     else:
