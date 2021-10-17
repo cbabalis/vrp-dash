@@ -22,6 +22,8 @@ import os
 cwd = os.getcwd()
 from dash_extensions import Download
 from dash_extensions.snippets import send_data_frame
+from dash_extensions.snippets import send_file
+from urllib.parse import quote as urlquote
 import flora
 import pdb
 import network_operations
@@ -33,6 +35,7 @@ image = 'url("assets/Banner_Fleet.jpg")'
 selected_dff = pd.DataFrame()
 lon_lat_struct_of_POIs = ''
 solution_found = False
+results_path = 'results/'
 
 
 ## APIS start
@@ -580,6 +583,27 @@ app.layout = html.Div([
     html.Div(children=[
         dcc.Graph(id='map-fig'),
     ], style = {'display': 'inline-block', 'height': '178%', 'width': '95%'}),
+    # download button her
+    html.Hr(),
+    html.Label("ΣΤΟΙΧΕΙΑ ΠΑΡΑΓΩΓΗΣ-ΚΑΤΑΝΑΛΩΣΗΣ",
+                    style={'font-weight': 'bold',
+                            'fontSize' : '17px',
+                            'margin-left':'auto',
+                            'margin-right':'auto',
+                            'display':'block'}),
+                dcc.Dropdown(id='solutions_available',
+                            style={"display": "block",
+                    "margin-left": "auto",
+                    "margin-right": "auto",
+                    # "width":"60%"
+                    }),
+    html.Div(
+        [
+            html.Button("Κατεβασμα λύσης (txt)", id="btn_txt"),
+            Download(id="download_solution_txt"),
+        ],
+    ),
+    # end of download button here
 ])
 
 
@@ -782,6 +806,35 @@ def print_vrp_to_map(click_value):
     """
     fig = vrp_plots.plot_vehicles_with_routes(lon_lat_struct_of_POIs)
     return fig
+
+
+## download solution space here
+
+@app.callback(
+    Output('solutions_available', 'options'),
+    Input('solutions_available', 'value'))
+def set_products_options(selected_country):
+    prod_cons_files = [f for f in listdir(results_path) if isfile(join(results_path, f))] #uploaded_files(prod_cons_path)
+    return [{'label': i, 'value': i} for i in prod_cons_files]
+
+
+def file_download_link(filename):
+    """Create a Plotly Dash 'A' element that downloads a file from the app."""
+    location = "/download/{}".format(urlquote(filename))
+    return html.A(filename, href=location)
+
+
+@app.callback(
+    Output("download_solution_txt", "data"),
+    Input("btn_txt", "n_clicks"),
+    State("solutions_available", "value"),
+    prevent_initial_call=True,
+)
+def func(n_clicks, solution_available):
+    solution_to_download = results_path + solution_available
+    print("solution available is ", solution_to_download)
+    return send_file(solution_to_download)
+    #return html.Li(file_download_link(solution_available))
 
 
 
